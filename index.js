@@ -72,20 +72,30 @@ app.use("/uploads", express.static(path.join(__dirname, "../uploads"), {
   }
 }));
 
-// Swagger API Documentation
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  swaggerOptions: {
-    url: "/api/docs/swagger.json",
-  }
-}));
-
-// Root endpoint
+// Root endpoint - simple, no dependencies
 app.get("/", (req, res) => {
-  res.json({ 
+  res.status(200).json({ 
     message: "GMS API is running",
+    status: "healthy",
     documentation: "/api/docs"
   });
 });
+
+// Swagger API Documentation
+try {
+  app.get("/api/docs/swagger.json", (req, res) => {
+    res.json(swaggerSpec);
+  });
+  
+  app.use("/api/docs", swaggerUi.serve);
+  app.get("/api/docs/", swaggerUi.setup(swaggerSpec, {
+    swaggerOptions: {
+      url: "/api/docs/swagger.json",
+    }
+  }));
+} catch (err) {
+  console.warn("Swagger setup warning:", err.message);
+}
 
 // API Routes
 app.use("/api/members", membersRouter);
