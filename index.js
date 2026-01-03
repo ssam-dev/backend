@@ -78,6 +78,15 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     url: "/api/docs/swagger.json",
   }
 }));
+
+// Root endpoint
+app.get("/", (req, res) => {
+  res.json({ 
+    message: "GMS API is running",
+    documentation: "/api/docs"
+  });
+});
+
 // API Routes
 app.use("/api/members", membersRouter);
 app.use("/api/trainers", trainersRouter);
